@@ -21,8 +21,12 @@ export class UsersService {
     return this.repo.find();
   }
 
-  getUserById(id: string) {
-    return this.repo.findOneBy({ id });
+  async getUserById(id: string) {
+    const user = await this.repo.findOneBy({ id });
+
+    if (!user) throw new NotFoundException('User not found!');
+
+    return user;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
