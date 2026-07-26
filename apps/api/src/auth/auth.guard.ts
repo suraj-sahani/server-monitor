@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<RequestWithUser>();
 
     const currentUser: IUserCtx = {
-      id: 'admin-user',
+      id: '00000000-0000-0000-0000-00000000000',
       name: 'Admin',
       email: 'admin@example.com',
     };

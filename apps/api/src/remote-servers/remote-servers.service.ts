@@ -15,10 +15,11 @@ export class RemoteServersService {
     private repo: Repository<RemoteServer>,
   ) {}
 
-  createRemoteServer(payload: CreateRemoteServerDto & { ownerId: string }) {
+  createRemoteServer(payload: CreateRemoteServerDto, ownerId: string) {
     const newServer = this.repo.create({
       ...payload,
       status: RemoteServerStatus.UNKNOWN,
+      ownerId,
     });
     return this.repo.save(newServer);
   }
@@ -50,7 +51,9 @@ export class RemoteServersService {
   }
 
   async deleteRemoteServer(id: string, ownerId: string) {
-    await this.repo.findOneByOrFail({ id, ownerId });
+    const server = await this.repo.findOneBy({ id, ownerId });
+
+    if (!server) throw new NotFoundException('Server not found');
 
     return this.repo.delete({ id, ownerId });
   }
