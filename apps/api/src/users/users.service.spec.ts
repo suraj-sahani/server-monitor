@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 
 const mockUser: User = {
   id: '550e8400-e29b-41d4-a716-446655440000',
@@ -30,7 +30,6 @@ const mockRepository = {
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repo: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,7 +43,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repo = module.get<Repository<User>>(getRepositoryToken(User));
 
     vi.clearAllMocks();
   });
@@ -62,8 +60,8 @@ describe('UsersService', () => {
 
       const result = await service.create(createUserDto);
 
-      expect(repo.create).toHaveBeenCalledWith(createUserDto);
-      expect(repo.save).toHaveBeenCalledWith(mockUser);
+      expect(mockRepository.create).toHaveBeenCalledWith(createUserDto);
+      expect(mockRepository.save).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockUser);
     });
   });
@@ -74,7 +72,7 @@ describe('UsersService', () => {
 
       const result = await service.getAllUsers();
 
-      expect(repo.find).toHaveBeenCalled();
+      expect(mockRepository.find).toHaveBeenCalled();
       expect(result).toEqual(mockUsersList);
     });
 
@@ -93,7 +91,9 @@ describe('UsersService', () => {
 
       const result = await service.getUserById(mockUser.id);
 
-      expect(repo.findOneBy).toHaveBeenCalledWith({ id: mockUser.id });
+      expect(mockRepository.findOneBy).toHaveBeenCalledWith({
+        id: mockUser.id,
+      });
       expect(result).toEqual(mockUser);
     });
 
@@ -119,8 +119,13 @@ describe('UsersService', () => {
 
       const result = await service.updateUser(mockUser.id, updateUserDto);
 
-      expect(repo.findOneBy).toHaveBeenCalledWith({ id: mockUser.id });
-      expect(repo.save).toHaveBeenCalledWith({ ...mockUser, ...updateUserDto });
+      expect(mockRepository.findOneBy).toHaveBeenCalledWith({
+        id: mockUser.id,
+      });
+      expect(mockRepository.save).toHaveBeenCalledWith({
+        ...mockUser,
+        ...updateUserDto,
+      });
       expect(result).toEqual(updatedUser);
     });
 
@@ -140,8 +145,10 @@ describe('UsersService', () => {
 
       const result = await service.deleteUser(mockUser.id);
 
-      expect(repo.findOneBy).toHaveBeenCalledWith({ id: mockUser.id });
-      expect(repo.remove).toHaveBeenCalledWith(mockUser);
+      expect(mockRepository.findOneBy).toHaveBeenCalledWith({
+        id: mockUser.id,
+      });
+      expect(mockRepository.remove).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockUser);
     });
 

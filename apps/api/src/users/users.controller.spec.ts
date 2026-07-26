@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { User } from './entities/user.entity';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 
 const mockUser: User = {
   id: '550e8400-e29b-41d4-a716-446655440000',
