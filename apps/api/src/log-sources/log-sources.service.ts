@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLogSourceDto } from './dto/create-log-source.dto';
 import { UpdateLogSourceDto } from './dto/update-log-source.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LogSource } from './entities/log-source.entity';
+import { LogSource, LogSourceStatus } from './entities/log-source.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -13,7 +13,11 @@ export class LogSourcesService {
   ) {}
 
   create(ownerId: string, createLogSourceDto: CreateLogSourceDto) {
-    const logSource = this.repo.create({ ...createLogSourceDto, ownerId });
+    const logSource = this.repo.create({
+      ...createLogSourceDto,
+      status: LogSourceStatus.UNKNOWN,
+      ownerId,
+    });
     return this.repo.save(logSource);
   }
 

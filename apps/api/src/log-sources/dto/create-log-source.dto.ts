@@ -1,8 +1,15 @@
-import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { LogSourceType } from '../entities/log-source.entity';
 
 export class CreateLogSourceDto {
-  @IsString({ message: 'Log-source name is required. ' })
+  @IsNotEmpty({ message: 'Log-source name is required' })
+  @IsString({ message: 'Log-source should be string. ' })
   name: string;
 
   @IsOptional()
