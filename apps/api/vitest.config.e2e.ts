@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     globals: true,
     root: './',
-    include: ['src/**/*.spec.ts'],
+    include: ['test/**/*.e2e-spec.ts'],
     environment: 'node',
     alias: {
       src: resolve(__dirname, './src'),
