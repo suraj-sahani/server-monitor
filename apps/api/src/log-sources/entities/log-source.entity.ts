@@ -31,10 +31,10 @@ export class LogSource {
   @Column({ nullable: true })
   description?: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: LogSourceStatus, default: LogSourceStatus.UNKNOWN })
   status: LogSourceStatus;
 
-  @Column()
+  @Column({ type: 'enum', enum: LogSourceType, default: LogSourceType.ZABBIX })
   type: LogSourceType;
 
   @Column({ type: 'simple-json' })
