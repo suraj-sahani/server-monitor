@@ -12,7 +12,7 @@ export class LogSourcesService {
     private repo: Repository<LogSource>,
   ) {}
 
-  create(ownerId: string, createLogSourceDto: CreateLogSourceDto) {
+  createLogSource(ownerId: string, createLogSourceDto: CreateLogSourceDto) {
     const logSource = this.repo.create({
       ...createLogSourceDto,
       status: LogSourceStatus.UNKNOWN,
@@ -21,11 +21,11 @@ export class LogSourcesService {
     return this.repo.save(logSource);
   }
 
-  findAll(ownerId: string) {
+  getAllLogSources(ownerId: string) {
     return this.repo.find({ where: { ownerId } });
   }
 
-  async findOne(id: string, ownerId: string) {
+  async getLogSourceById(id: string, ownerId: string) {
     const existingLogSource = await this.repo.findOneBy({ id, ownerId });
 
     if (!existingLogSource)
@@ -34,7 +34,7 @@ export class LogSourcesService {
     return existingLogSource;
   }
 
-  async update(
+  async updateLogSource(
     id: string,
     ownerId: string,
     updateLogSourceDto: UpdateLogSourceDto,
@@ -49,7 +49,7 @@ export class LogSourcesService {
     return this.repo.save(updatedLogSource);
   }
 
-  async remove(id: string, ownerId: string) {
+  async deleteLogSource(id: string, ownerId: string) {
     const existingLogSource = await this.repo.findOneBy({ id, ownerId });
 
     if (!existingLogSource)

@@ -33,14 +33,14 @@ export class LogSourcesController {
     @Body() createLogSourceDto: CreateLogSourceDto,
     @UserCtx() user: IUserCtx,
   ) {
-    return this.logSourcesService.create(user.id, createLogSourceDto);
+    return this.logSourcesService.createLogSource(user.id, createLogSourceDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all log-sources' })
   @ApiOkResponse({ description: "List all user's log sources" })
   findAll(@UserCtx() user: IUserCtx) {
-    return this.logSourcesService.findAll(user.id);
+    return this.logSourcesService.getAllLogSources(user.id);
   }
 
   @Get(':id')
@@ -48,7 +48,7 @@ export class LogSourcesController {
   @ApiOkResponse({ description: 'Log-source found' })
   @ApiNotFoundResponse({ description: 'Log-source not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string, @UserCtx() user: IUserCtx) {
-    return this.logSourcesService.findOne(id, user.id);
+    return this.logSourcesService.getLogSourceById(id, user.id);
   }
 
   @Patch(':id')
@@ -61,7 +61,11 @@ export class LogSourcesController {
     @UserCtx() user: IUserCtx,
     @Body() updateLogSourceDto: UpdateLogSourceDto,
   ) {
-    return this.logSourcesService.update(id, user.id, updateLogSourceDto);
+    return this.logSourcesService.updateLogSource(
+      id,
+      user.id,
+      updateLogSourceDto,
+    );
   }
 
   @ApiOperation({ summary: 'Delete log-source' })
@@ -69,6 +73,6 @@ export class LogSourcesController {
   @ApiNotFoundResponse({ description: 'Log-source not found' })
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string, @UserCtx() user: IUserCtx) {
-    return this.logSourcesService.remove(id, user.id);
+    return this.logSourcesService.deleteLogSource(id, user.id);
   }
 }
