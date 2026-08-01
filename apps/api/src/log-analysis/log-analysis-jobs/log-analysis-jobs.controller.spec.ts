@@ -1,6 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LogAnalysisJobsController } from './log-analysis-jobs.controller';
 import { LogAnalysisJobsService } from './log-analysis-jobs.service';
+import { NotFoundException } from '@nestjs/common';
+import { IUserCtx } from '@/auth/user.interface';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
+import {
+  LogAnalysisJobStatus,
+  LogAnalysisJobType,
+} from './entities/log-analysis-job.entity';
+
+const mockUserCtx: IUserCtx = {
+  id: 'owner-uuid',
+  email: 'test@example.com',
+  name: 'Test User',
+};
+
+const mockJobId = 'job-uuid';
+
+const mockJob = {
+  id: mockJobId,
+  ownerId: mockUserCtx.id,
+  name: 'Test Job',
+  description: 'Test Description',
+  status: LogAnalysisJobStatus.PENDING,
+  type: LogAnalysisJobType.ONETIME,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+const mockJobsList = [mockJob];
+
+const mockLogAnalysisJobsService = {
+  createLogAnalysisJob: vi.fn(),
+  getAllLogAnalysisJobs: vi.fn(),
+  getLogAnalysisJobById: vi.fn(),
+  updateLogAnalysisJob: vi.fn(),
+  deleteLogAnalysisJob: vi.fn(),
+};
 
 describe('LogAnalysisJobsController', () => {
   let controller: LogAnalysisJobsController;
@@ -11,7 +47,7 @@ describe('LogAnalysisJobsController', () => {
       providers: [
         {
           provide: LogAnalysisJobsService,
-          useValue: {},
+          useValue: mockLogAnalysisJobsService,
         },
       ],
     }).compile();
@@ -19,9 +55,96 @@ describe('LogAnalysisJobsController', () => {
     controller = module.get<LogAnalysisJobsController>(
       LogAnalysisJobsController,
     );
+
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should create a new log analysis job', async () => {
+      const createDto = {
+        name: 'Test Job',
+        type: LogAnalysisJobType.ONETIME,
+        logSourceId: 'ls-uuid',
+        remoteServerId: 'rs-uuid',
+      };
+
+      mockLogAnalysisJobsService.createLogAnalysisJob.mockResolvedValue(
+        mockJob,
+      );
+
+      const result = await controller.create(createDto, mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.createLogAnalysisJob,
+      ).toHaveBeenCalledWith(createDto, mockUserCtx.id);
+      expect(result).toEqual(mockJob);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of jobs', async () => {
+      mockLogAnalysisJobsService.getAllLogAnalysisJobs.mockResolvedValue(
+        mockJobsList,
+      );
+
+      const result = await controller.findAll(mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.getAllLogAnalysisJobs,
+      ).toHaveBeenCalledWith(mockUserCtx.id);
+      expect(result).toEqual(mockJobsList);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a job by ID', async () => {
+      mockLogAnalysisJobsService.getLogAnalysisJobById.mockResolvedValue(
+        mockJob,
+      );
+
+      const result = await controller.findOne(mockJobId, mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.getLogAnalysisJobById,
+      ).toHaveBeenCalledWith(mockJobId, mockUserCtx.id);
+      expect(result).toEqual(mockJob);
+    });
+  });
+
+  describe('update', () => {
+    it('should update and return the job', async () => {
+      const updateDto = { name: 'Updated Name' };
+      const updatedJob = { ...mockJob, ...updateDto };
+      mockLogAnalysisJobsService.updateLogAnalysisJob.mockResolvedValue(
+        updatedJob,
+      );
+
+      const result = await controller.update(mockJobId, updateDto, mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.updateLogAnalysisJob,
+      ).toHaveBeenCalledWith(mockJobId, mockUserCtx.id, updateDto);
+      expect(result).toEqual(updatedJob);
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove and return the job', async () => {
+      const deleteResult = mockJob;
+      mockLogAnalysisJobsService.deleteLogAnalysisJob.mockResolvedValue(
+        deleteResult,
+      );
+
+      const result = await controller.remove(mockJobId, mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.deleteLogAnalysisJob,
+      ).toHaveBeenCalledWith(mockJobId, mockUserCtx.id);
+      expect(result).toEqual(deleteResult);
+    });
   });
 });

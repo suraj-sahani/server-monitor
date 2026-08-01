@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -49,11 +49,11 @@ export class LogAnalysisJob {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => LogSource)
+  @ManyToOne(() => LogSource, { nullable: false })
   @JoinColumn()
   logSource: LogSource;
 
-  @OneToOne(() => RemoteServer)
+  @ManyToOne(() => RemoteServer, { nullable: false })
   @JoinColumn()
   remoteServer: RemoteServer;
 }

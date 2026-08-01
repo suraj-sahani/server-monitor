@@ -19,35 +19,39 @@ export class LogAnalysisJobsService {
     private remoteServersService: RemoteServersService,
   ) {}
 
-  async create(
+  async createLogAnalysisJob(
     createLogAnalysisJobDto: CreateLogAnalysisJobDto,
     ownerId: string,
   ) {
     const { logSourceId, remoteServerId } = createLogAnalysisJobDto;
-    const logSource = await this.logSourceService.findOne(logSourceId, ownerId);
-
-    if (!logSource) throw new NotFoundException('Log-source not found!');
+    // We do not check if the log-source or the remote-server exists
+    // or not as these cases are already handled within each of their
+    // respoective service methods
+    const logSource = await this.logSourceService.getLogSourceById(
+      logSourceId,
+      ownerId,
+    );
 
     const remoteServer = await this.remoteServersService.getRemoteServerById(
       remoteServerId,
       ownerId,
     );
 
-    if (!remoteServer) throw new NotFoundException('Remote-server not found!');
-
     const job = this.repo.create({
       ...createLogAnalysisJobDto,
       status: LogAnalysisJobStatus.INITIALIZED,
+      logSource,
+      remoteServer,
       ownerId,
     });
     return this.repo.save(job);
   }
 
-  findAll(ownerId: string) {
+  getAllLogAnalysisJobs(ownerId: string) {
     return this.repo.find({ where: { ownerId } });
   }
 
-  async findOne(id: string, ownerId: string) {
+  async getLogAnalysisJobById(id: string, ownerId: string) {
     const logAnalysisJob = await this.repo.findOne({ where: { id, ownerId } });
 
     if (!logAnalysisJob)
@@ -56,20 +60,20 @@ export class LogAnalysisJobsService {
     return logAnalysisJob;
   }
 
-  async update(
+  async updateLogAnalysisJob(
     id: string,
     ownerId: string,
     updateLogAnalysisJobDto: UpdateLogAnalysisJobDto,
   ) {
-    const job = await this.findOne(id, ownerId);
+    const job = await this.getLogAnalysisJobById(id, ownerId);
 
     if (!job) throw new NotFoundException('Job not found!');
 
-    return this.repo.save({ ...job, updateLogAnalysisJobDto });
+    return this.repo.save({ ...job, ...updateLogAnalysisJobDto });
   }
 
-  async remove(id: string, ownerId: string) {
-    const job = await this.findOne(id, ownerId);
+  async deleteLogAnalysisJob(id: string, ownerId: string) {
+    const job = await this.getLogAnalysisJobById(id, ownerId);
 
     if (!job) throw new NotFoundException('Log-analysis job not found!');
 
