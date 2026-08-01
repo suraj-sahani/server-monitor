@@ -139,12 +139,12 @@ describe('LogSourcesService', () => {
     it('should throw NotFoundException when source is not found', async () => {
       mockRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.findOne('nonexistent-id', mockOwnerId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findOne('nonexistent-id', mockOwnerId)).rejects.toThrow(
-        'Log-source not found!',
-      );
+      await expect(
+        service.findOne('nonexistent-id', mockOwnerId),
+      ).rejects.toThrow(NotFoundException);
+      await expect(
+        service.findOne('nonexistent-id', mockOwnerId),
+      ).rejects.toThrow('Log-source not found!');
     });
   });
 
@@ -156,11 +156,7 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(mockLogSource);
       mockRepository.save.mockResolvedValue(updatedSource);
 
-      const result = await service.update(
-        mockSourceId,
-        mockOwnerId,
-        updateDto,
-      );
+      const result = await service.update(mockSourceId, mockOwnerId, updateDto);
 
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({
         id: mockSourceId,
