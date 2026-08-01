@@ -31,7 +31,7 @@ export class RemoteServersService {
   async getRemoteServerById(id: string, ownerId: string) {
     const server = await this.repo.findOneBy({ id, ownerId });
 
-    if (!server) throw new NotFoundException('Server not found!');
+    if (!server) throw new NotFoundException('Remote-server not found!');
 
     return server;
   }
@@ -43,7 +43,7 @@ export class RemoteServersService {
   ) {
     const server = await this.repo.findOneBy({ id, ownerId });
 
-    if (!server) throw new NotFoundException('Server not found!');
+    if (!server) throw new NotFoundException('Remote-server not found!');
 
     const updatedServer = { ...server, ...updateRemoteServerDto };
 
@@ -53,7 +53,7 @@ export class RemoteServersService {
   async deleteRemoteServer(id: string, ownerId: string) {
     const server = await this.repo.findOneBy({ id, ownerId });
 
-    if (!server) throw new NotFoundException('Server not found');
+    if (!server) throw new NotFoundException('Remote-server not found');
 
     return this.repo.delete({ id, ownerId });
   }

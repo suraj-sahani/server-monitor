@@ -47,11 +47,11 @@ const mockLogSourcesList: LogSource[] = [
 ];
 
 const mockLogSourcesService = {
-  create: vi.fn(),
-  findAll: vi.fn(),
-  findOne: vi.fn(),
-  update: vi.fn(),
-  remove: vi.fn(),
+  createLogSource: vi.fn(),
+  getAllLogSources: vi.fn(),
+  getLogSourceById: vi.fn(),
+  updateLogSource: vi.fn(),
+  deleteLogSource: vi.fn(),
 };
 
 describe('LogSourcesController', () => {
@@ -84,11 +84,11 @@ describe('LogSourcesController', () => {
         type: LogSourceType.ZABBIX,
         config: { host: 'localhost' },
       };
-      mockLogSourcesService.create.mockResolvedValue(mockLogSource);
+      mockLogSourcesService.createLogSource.mockResolvedValue(mockLogSource);
 
       const result = await controller.create(createDto, mockUserCtx);
 
-      expect(mockLogSourcesService.create).toHaveBeenCalledWith(
+      expect(mockLogSourcesService.createLogSource).toHaveBeenCalledWith(
         mockUserCtx.id,
         createDto,
       );
@@ -98,7 +98,7 @@ describe('LogSourcesController', () => {
     it('should throw a BadRequestException when validation fails', async () => {
       const createDto = { name: '', config: {} } as CreateLogSourceDto;
 
-      mockLogSourcesService.create.mockRejectedValue(
+      mockLogSourcesService.createLogSource.mockRejectedValue(
         new BadRequestException('Validation failed'),
       );
 
@@ -110,18 +110,18 @@ describe('LogSourcesController', () => {
 
   describe('findAll', () => {
     it('should return an array of log sources', async () => {
-      mockLogSourcesService.findAll.mockResolvedValue(mockLogSourcesList);
+      mockLogSourcesService.getAllLogSources.mockResolvedValue(mockLogSourcesList);
 
       const result = await controller.findAll(mockUserCtx);
 
-      expect(mockLogSourcesService.findAll).toHaveBeenCalledWith(
+      expect(mockLogSourcesService.getAllLogSources).toHaveBeenCalledWith(
         mockUserCtx.id,
       );
       expect(result).toEqual(mockLogSourcesList);
     });
 
     it('should return an empty array when no sources exist', async () => {
-      mockLogSourcesService.findAll.mockResolvedValue([]);
+      mockLogSourcesService.getAllLogSources.mockResolvedValue([]);
 
       const result = await controller.findAll(mockUserCtx);
 
@@ -131,11 +131,11 @@ describe('LogSourcesController', () => {
 
   describe('findOne', () => {
     it('should return a log source by ID', async () => {
-      mockLogSourcesService.findOne.mockResolvedValue(mockLogSource);
+      mockLogSourcesService.getLogSourceById.mockResolvedValue(mockLogSource);
 
       const result = await controller.findOne(mockSourceId, mockUserCtx);
 
-      expect(mockLogSourcesService.findOne).toHaveBeenCalledWith(
+      expect(mockLogSourcesService.getLogSourceById).toHaveBeenCalledWith(
         mockSourceId,
         mockUserCtx.id,
       );
@@ -143,7 +143,7 @@ describe('LogSourcesController', () => {
     });
 
     it('should propagate NotFoundException when source is not found', async () => {
-      mockLogSourcesService.findOne.mockRejectedValue(
+      mockLogSourcesService.getLogSourceById.mockRejectedValue(
         new NotFoundException('Log-source not found!'),
       );
 
@@ -157,7 +157,7 @@ describe('LogSourcesController', () => {
     it('should update and return the log source', async () => {
       const updateDto = { name: 'Updated Name' };
       const updatedSource = { ...mockLogSource, ...updateDto };
-      mockLogSourcesService.update.mockResolvedValue(updatedSource);
+      mockLogSourcesService.updateLogSource.mockResolvedValue(updatedSource);
 
       const result = await controller.update(
         mockSourceId,
@@ -165,7 +165,7 @@ describe('LogSourcesController', () => {
         updateDto,
       );
 
-      expect(mockLogSourcesService.update).toHaveBeenCalledWith(
+      expect(mockLogSourcesService.updateLogSource).toHaveBeenCalledWith(
         mockSourceId,
         mockUserCtx.id,
         updateDto,
@@ -174,7 +174,7 @@ describe('LogSourcesController', () => {
     });
 
     it('should propagate NotFoundException when source is not found', async () => {
-      mockLogSourcesService.update.mockRejectedValue(
+      mockLogSourcesService.updateLogSource.mockRejectedValue(
         new NotFoundException('Log-source not found!'),
       );
 
@@ -188,7 +188,7 @@ describe('LogSourcesController', () => {
         config: 'invalid config',
       } as unknown as UpdateLogSourceDto;
 
-      mockLogSourcesService.update.mockRejectedValue(
+      mockLogSourcesService.updateLogSource.mockRejectedValue(
         new BadRequestException('Validation failed'),
       );
 
@@ -201,11 +201,11 @@ describe('LogSourcesController', () => {
   describe('remove', () => {
     it('should delete and return the result', async () => {
       const deleteResult = { affected: 1 };
-      mockLogSourcesService.remove.mockResolvedValue(deleteResult);
+      mockLogSourcesService.deleteLogSource.mockResolvedValue(deleteResult);
 
       const result = await controller.remove(mockSourceId, mockUserCtx);
 
-      expect(mockLogSourcesService.remove).toHaveBeenCalledWith(
+      expect(mockLogSourcesService.deleteLogSource).toHaveBeenCalledWith(
         mockSourceId,
         mockUserCtx.id,
       );
@@ -213,7 +213,7 @@ describe('LogSourcesController', () => {
     });
 
     it('should propagate NotFoundException when source is not found', async () => {
-      mockLogSourcesService.remove.mockRejectedValue(
+      mockLogSourcesService.deleteLogSource.mockRejectedValue(
         new NotFoundException('Log-source not found!'),
       );
 

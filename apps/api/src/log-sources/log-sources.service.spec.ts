@@ -93,7 +93,7 @@ describe('LogSourcesService', () => {
         updatedAt: new Date(),
       });
 
-      const result = await service.create(mockOwnerId, createLogSourceDto);
+      const result = await service.createLogSource(mockOwnerId, createLogSourceDto);
 
       expect(mockRepository.create).toHaveBeenCalledWith(createdSource);
       expect(mockRepository.save).toHaveBeenCalledWith(createdSource);
@@ -106,7 +106,7 @@ describe('LogSourcesService', () => {
     it('should return an array of log sources for a given owner', async () => {
       mockRepository.find.mockResolvedValue(mockLogSourcesList);
 
-      const result = await service.findAll(mockOwnerId);
+      const result = await service.getAllLogSources(mockOwnerId);
 
       expect(mockRepository.find).toHaveBeenCalledWith({
         where: { ownerId: mockOwnerId },
@@ -117,7 +117,7 @@ describe('LogSourcesService', () => {
     it('should return an empty array when no sources exist', async () => {
       mockRepository.find.mockResolvedValue([]);
 
-      const result = await service.findAll(mockOwnerId);
+      const result = await service.getAllLogSources(mockOwnerId);
 
       expect(result).toEqual([]);
     });
@@ -127,7 +127,7 @@ describe('LogSourcesService', () => {
     it('should return a log source when found', async () => {
       mockRepository.findOneBy.mockResolvedValue(mockLogSource);
 
-      const result = await service.findOne(mockSourceId, mockOwnerId);
+      const result = await service.getLogSourceById(mockSourceId, mockOwnerId);
 
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({
         id: mockSourceId,
@@ -140,10 +140,10 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(null);
 
       await expect(
-        service.findOne('nonexistent-id', mockOwnerId),
+        service.getLogSourceById('nonexistent-id', mockOwnerId),
       ).rejects.toThrow(NotFoundException);
       await expect(
-        service.findOne('nonexistent-id', mockOwnerId),
+        service.getLogSourceById('nonexistent-id', mockOwnerId),
       ).rejects.toThrow('Log-source not found!');
     });
   });
@@ -156,7 +156,7 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(mockLogSource);
       mockRepository.save.mockResolvedValue(updatedSource);
 
-      const result = await service.update(mockSourceId, mockOwnerId, updateDto);
+      const result = await service.updateLogSource(mockSourceId, mockOwnerId, updateDto);
 
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({
         id: mockSourceId,
@@ -170,7 +170,7 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(null);
 
       await expect(
-        service.update('nonexistent-id', mockOwnerId, {
+        service.updateLogSource('nonexistent-id', mockOwnerId, {
           name: 'Test',
         }),
       ).rejects.toThrow(NotFoundException);
@@ -183,7 +183,7 @@ describe('LogSourcesService', () => {
       const deleteResult = { affected: 1 };
       mockRepository.delete.mockResolvedValue(deleteResult);
 
-      const result = await service.remove(mockSourceId, mockOwnerId);
+      const result = await service.deleteLogSource(mockSourceId, mockOwnerId);
 
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({
         id: mockSourceId,
@@ -200,7 +200,7 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(null);
 
       await expect(
-        service.remove('nonexistent-id', mockOwnerId),
+        service.deleteLogSource('nonexistent-id', mockOwnerId),
       ).rejects.toThrow(NotFoundException);
     });
   });

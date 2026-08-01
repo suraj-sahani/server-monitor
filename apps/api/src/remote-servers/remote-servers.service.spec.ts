@@ -146,7 +146,7 @@ describe('RemoteServersService', () => {
       ).rejects.toThrow(NotFoundException);
       await expect(
         service.getRemoteServerById('nonexistent-id', mockOwnerId),
-      ).rejects.toThrow('Server not found!');
+      ).rejects.toThrow('Remote-server not found!');
     });
   });
 
