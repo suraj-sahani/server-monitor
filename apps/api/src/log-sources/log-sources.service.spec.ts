@@ -93,7 +93,10 @@ describe('LogSourcesService', () => {
         updatedAt: new Date(),
       });
 
-      const result = await service.createLogSource(mockOwnerId, createLogSourceDto);
+      const result = await service.createLogSource(
+        mockOwnerId,
+        createLogSourceDto,
+      );
 
       expect(mockRepository.create).toHaveBeenCalledWith(createdSource);
       expect(mockRepository.save).toHaveBeenCalledWith(createdSource);
@@ -156,7 +159,11 @@ describe('LogSourcesService', () => {
       mockRepository.findOneBy.mockResolvedValue(mockLogSource);
       mockRepository.save.mockResolvedValue(updatedSource);
 
-      const result = await service.updateLogSource(mockSourceId, mockOwnerId, updateDto);
+      const result = await service.updateLogSource(
+        mockSourceId,
+        mockOwnerId,
+        updateDto,
+      );
 
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({
         id: mockSourceId,

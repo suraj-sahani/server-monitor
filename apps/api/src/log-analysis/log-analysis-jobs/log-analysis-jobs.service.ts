@@ -9,6 +9,7 @@ import {
 import { Repository } from 'typeorm';
 import { LogSourcesService } from '@/log-sources/log-sources.service';
 import { RemoteServersService } from '@/remote-servers/remote-servers.service';
+import { LogSource } from '@/log-sources/entities/log-source.entity';
 
 @Injectable()
 export class LogAnalysisJobsService {
@@ -23,14 +24,18 @@ export class LogAnalysisJobsService {
     createLogAnalysisJobDto: CreateLogAnalysisJobDto,
     ownerId: string,
   ) {
-    const { logSourceId, remoteServerId } = createLogAnalysisJobDto;
+    const { remoteServerId } = createLogAnalysisJobDto;
     // We do not check if the log-source or the remote-server exists
     // or not as these cases are already handled within each of their
     // respoective service methods
-    const logSource = await this.logSourceService.getLogSourceById(
-      logSourceId,
-      ownerId,
-    );
+    let logSource: LogSource | undefined;
+
+    if (createLogAnalysisJobDto.logSourceId) {
+      logSource = await this.logSourceService.getLogSourceById(
+        createLogAnalysisJobDto.logSourceId,
+        ownerId,
+      );
+    }
 
     const remoteServer = await this.remoteServersService.getRemoteServerById(
       remoteServerId,

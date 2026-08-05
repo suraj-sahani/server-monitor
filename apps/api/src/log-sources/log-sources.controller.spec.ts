@@ -110,7 +110,9 @@ describe('LogSourcesController', () => {
 
   describe('findAll', () => {
     it('should return an array of log sources', async () => {
-      mockLogSourcesService.getAllLogSources.mockResolvedValue(mockLogSourcesList);
+      mockLogSourcesService.getAllLogSources.mockResolvedValue(
+        mockLogSourcesList,
+      );
 
       const result = await controller.findAll(mockUserCtx);
 

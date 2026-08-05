@@ -122,6 +122,46 @@ describe('LogAnalysisJobsService', () => {
       expect(result.id).toEqual('new-uuid');
     });
 
+    it('should create and save a new job without a log source', async () => {
+      const createDtoWithoutLogSource = {
+        name: 'New Job No Log Source',
+        type: LogAnalysisJobType.ONETIME,
+        remoteServerId: 'rs-id',
+      };
+
+      mockRemoteServersService.getRemoteServerById.mockResolvedValue({
+        id: 'rs-id',
+      });
+
+      const createdEntity = {
+        ...createDtoWithoutLogSource,
+        ownerId: mockOwnerId,
+        status: LogAnalysisJobStatus.INITIALIZED,
+        logSource: undefined,
+        remoteServer: { id: 'rs-id' },
+      };
+
+      mockRepository.create.mockReturnValue(createdEntity);
+      mockRepository.save.mockResolvedValue({
+        id: 'new-uuid',
+        ...createdEntity,
+      });
+
+      const result = await service.createLogAnalysisJob(
+        createDtoWithoutLogSource,
+        mockOwnerId,
+      );
+
+      expect(mockLogSourcesService.getLogSourceById).not.toHaveBeenCalled();
+      expect(mockRemoteServersService.getRemoteServerById).toHaveBeenCalledWith(
+        'rs-id',
+        mockOwnerId,
+      );
+      expect(mockRepository.create).toHaveBeenCalledWith(createdEntity);
+      expect(mockRepository.save).toHaveBeenCalledWith(createdEntity);
+      expect(result.id).toEqual('new-uuid');
+    });
+
     it('should throw NotFoundException if log source not found', async () => {
       mockLogSourcesService.getLogSourceById.mockRejectedValue(
         new NotFoundException('Log-source not found!'),

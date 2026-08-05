@@ -19,9 +19,9 @@ export class CreateLogAnalysisJobDto {
   @IsEnum(LogAnalysisJobType)
   type: LogAnalysisJobType;
 
-  @IsNotEmpty({ message: 'Log-source ID is required.' })
+  @IsOptional()
   @IsUUID()
-  logSourceId: string;
+  logSourceId?: string;
 
   @IsNotEmpty({ message: 'Remote-server ID is required.' })
   @IsUUID()

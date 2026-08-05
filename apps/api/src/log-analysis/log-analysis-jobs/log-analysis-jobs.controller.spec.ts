@@ -1,13 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { LogAnalysisJobsController } from './log-analysis-jobs.controller';
-import { LogAnalysisJobsService } from './log-analysis-jobs.service';
-import { NotFoundException } from '@nestjs/common';
 import { IUserCtx } from '@/auth/user.interface';
-import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   LogAnalysisJobStatus,
   LogAnalysisJobType,
 } from './entities/log-analysis-job.entity';
+import { LogAnalysisJobsController } from './log-analysis-jobs.controller';
+import { LogAnalysisJobsService } from './log-analysis-jobs.service';
 
 const mockUserCtx: IUserCtx = {
   id: 'owner-uuid',
@@ -82,6 +81,31 @@ describe('LogAnalysisJobsController', () => {
         mockLogAnalysisJobsService.createLogAnalysisJob,
       ).toHaveBeenCalledWith(createDto, mockUserCtx.id);
       expect(result).toEqual(mockJob);
+    });
+
+    it('should create a new log analysis job without logSourceId', async () => {
+      const createDto = {
+        name: 'Test Job 2',
+        type: LogAnalysisJobType.ONETIME,
+        remoteServerId: 'rs-uuid',
+      };
+
+      const mockJobWithoutLogSource = {
+        ...mockJob,
+        ...createDto,
+        logSourceId: undefined,
+      };
+
+      mockLogAnalysisJobsService.createLogAnalysisJob.mockResolvedValue(
+        mockJobWithoutLogSource,
+      );
+
+      const result = await controller.create(createDto, mockUserCtx);
+
+      expect(
+        mockLogAnalysisJobsService.createLogAnalysisJob,
+      ).toHaveBeenCalledWith(createDto, mockUserCtx.id);
+      expect(result).toEqual(mockJobWithoutLogSource);
     });
   });
 
