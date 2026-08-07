@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
@@ -15,6 +16,10 @@ export class CreateLogAnalysisJobDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsObject()
+  ticketingSystemConfig?: Record<string, any>;
 
   @IsEnum(LogAnalysisJobType)
   type: LogAnalysisJobType;

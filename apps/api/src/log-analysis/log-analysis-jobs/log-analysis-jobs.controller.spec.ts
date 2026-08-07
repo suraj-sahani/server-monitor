@@ -23,6 +23,7 @@ const mockJob = {
   description: 'Test Description',
   status: LogAnalysisJobStatus.PENDING,
   type: LogAnalysisJobType.ONETIME,
+  ticketingSystemConfig: { integration: 'jira' },
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -69,6 +70,7 @@ describe('LogAnalysisJobsController', () => {
         type: LogAnalysisJobType.ONETIME,
         logSourceId: 'ls-uuid',
         remoteServerId: 'rs-uuid',
+        ticketingSystemConfig: { integration: 'jira' },
       };
 
       mockLogAnalysisJobsService.createLogAnalysisJob.mockResolvedValue(

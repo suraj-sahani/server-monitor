@@ -24,6 +24,7 @@ const mockJob: LogAnalysisJob = {
   description: 'Desc',
   status: LogAnalysisJobStatus.PENDING,
   type: LogAnalysisJobType.ONETIME,
+  ticketingSystemConfig: { integration: 'jira' },
   createdAt: new Date(),
   updatedAt: new Date(),
   logSource: {} as LogSource,
@@ -85,6 +86,7 @@ describe('LogAnalysisJobsService', () => {
       type: LogAnalysisJobType.ONETIME,
       logSourceId: 'ls-id',
       remoteServerId: 'rs-id',
+      ticketingSystemConfig: { integration: 'jira' },
     };
 
     it('should create and save a new job', async () => {

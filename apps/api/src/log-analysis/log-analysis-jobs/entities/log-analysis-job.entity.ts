@@ -43,6 +43,9 @@ export class LogAnalysisJob {
   @Column()
   type: LogAnalysisJobType;
 
+  @Column({ type: 'simple-json' })
+  ticketingSystemConfig?: Record<string, any>;
+
   @CreateDateColumn()
   createdAt: Date;
 
